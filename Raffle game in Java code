@@ -1,20 +1,18 @@
 import java.util.Scanner;
 
 public class PrizeDemoDraw {
-
-	
 	
 	public static void main(String[] args){
 	
 	System.out.println("Enter number of people in draw: ");
 	Scanner scanner = new Scanner(System.in);
 	int players = scanner.nextInt();
-	System.out.println("number of people is  " + players);	
+	System.out.println("number of people is  " + players);	//to comfirm # of players
 	
 	System.out.println("Enter number of prizes in draw: ");
 	Scanner scanner1 = new Scanner(System.in);
 	int pri = scanner.nextInt();
-	System.out.println("number of prizes are  " + pri);	
+	System.out.println("number of prizes are  " + pri);	//to comfirm # of prizes
 	
 	//will not allow more prizes then players
 	//crude failsafe to block more prizes then players 
@@ -26,41 +24,10 @@ public class PrizeDemoDraw {
 		pri = priRept ;
 	}
 	
-	
 	scanner.close();
-
-	
-	Draw draws = new Draw();//creates new class
-	draws.begin(players , pri);//calls the method to start the game
-	
-
+	Players.winners(players , pri);//calls method to begin draw
 	}
-	
-	
-	
-	
 }
-
-
-
-
-public class Draw {
-	
-	int players;
-	int prizes;
-
-
-	public void begin(int players2, int pri) {
-		players=players2;
-	prizes=	pri;
-	//calls class for method execution 
-		Players.winners(players2, pri);
-		
-	}
-
-}
-
-
 
 
 
@@ -80,7 +47,7 @@ public class Players {
 		ArrayList<Integer>  lista = new ArrayList<Integer>();
 		
 		//for loop for adding players
-		for ( int counter = 0;counter<=players;counter++){
+		for ( int counter =1 ;counter<=players;counter++){
 			
 			lista.add(counter);
 
@@ -90,10 +57,13 @@ public class Players {
 		Collections.shuffle(lista);
 		Collections.shuffle(lista);
 		Collections.shuffle(lista);
+		
+		
+		
 		//for loop for printing out prize winners 
 		for ( int prizeCounter = 1;prizeCounter<=pri;prizeCounter++){
-		
-		System.out.println("prize #"+prizeCounter + " goes to player #" + lista.get(prizeCounter));
+			
+		System.out.println("prize #"+prizeCounter + " goes to player #" + lista.get(prizeCounter-1));
 		
 		}
 		
@@ -101,4 +71,3 @@ public class Players {
 
 
 }
-
