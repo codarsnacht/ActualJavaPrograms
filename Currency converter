@@ -1,0 +1,299 @@
+package lab9;
+
+public class AUD extends Currency {
+
+	public AUD(double i) {
+		// TODO Auto-generated constructor stub
+		country = "Australia";
+		currencyName= "AUD";
+		amount = i;
+		 
+		new Converter().setEuroValue(this);
+	}
+
+}
+
+package lab9;
+
+public class CAD extends Currency {
+
+	public CAD(double i) {
+		// TODO Auto-generated constructor stub
+		country = "Canada";
+		currencyName= "CAD";
+		amount = i;
+		 
+		new Converter().setEuroValue(this);
+	}
+
+}
+
+
+package lab9;
+
+public class Converter {
+	
+	String[] currencies = {"AUD","USD","GBP","CAD"};
+	double[] rates = {0.93, 0.66, 1.4,0.7};
+	
+	/*
+	 * This method takes a currency object as a parameter 
+	 * it looks ups its rate of exchange against the euro
+	 * and then sets its euro value 
+	 * 
+	*/
+	public void setEuroValue(Currency curr){
+		String currency = curr.getCurrencyName();
+		double rate = find(currency);
+		double value = curr.getAmount() * rate;
+		curr.setEuroValue(value);
+	}
+	
+	
+	/*
+	 * This method takes a currency name as a parameter
+	 * It returns its rate of exchange against the euro 
+	 * 
+	*/
+	private double find(String currencyName){
+		for (int i = 0; i< currencies.length; i++){
+			if(currencies[i].equals(currencyName)){
+				return rates[i];
+			}
+		}
+		return -1;
+	}
+	
+}
+
+
+package lab9;
+
+
+
+public abstract class Currency implements Comparable<Currency> {
+
+	protected  String country; // e.g. Canada
+	protected  String currencyName; // Canadian Dollar
+	protected double amount; // e.g. 100.0
+	protected double euroValue; // e.g. 70.03 (the value in euros)
+
+	public String getCountry(){
+		return this.country;
+	}
+	
+	public String getCurrencyName(){
+		return this.currencyName;
+	}
+	
+	public double getAmount(){
+		return amount;
+	}
+	
+	public void setAmount(double amt) {
+		if(amt<0){
+			throw new IllegalArgumentException("amount cannot be less than zero: " + amt);
+		}
+		this.amount = amt;
+	}
+	public  double getEuroValue(){
+		return this.euroValue;
+	}
+	
+	public void setEuroValue(double val){
+		this.euroValue = val;
+	}
+	
+	@Override
+	public int compareTo(Currency o) {	
+		//TODO
+		Currency other = (Currency) o;
+		if ( this.getEuroValue() > other.getEuroValue() ){
+			return 1; // this is greater
+		}
+		if ( other.getEuroValue() > this.getEuroValue() ){
+			return -1; //other is greater
+		}
+		else return 0;// as it must be even then 
+		
+		
+	}
+	
+}
+
+
+
+package lab9;
+
+public class GBP extends Currency {
+
+	public GBP(double i) {
+		// TODO Auto-generated constructor stub
+		country = "UK";
+		currencyName= "GBP";
+		amount = i;
+		 
+		new Converter().setEuroValue(this);
+	}
+
+}
+
+
+
+package lab9;
+
+public class USD extends Currency {
+
+	public USD(double i) {
+		// TODO Auto-generated constructor stub
+		country = "USA";
+		currencyName= "USD";
+		amount = i;
+		 
+		new Converter().setEuroValue(this);
+	}
+
+}
+
+
+
+package lab9;
+
+import java.util.ArrayList;
+import java.util.Collections;
+
+public class Wallet {
+	private String name;
+	private ArrayList<Currency>Curr = new ArrayList<Currency>() ;
+	
+	
+	public Wallet(String string) {
+		
+		name = string;
+		
+	}
+
+	public void addCurrency(Currency currency){
+
+		Curr.add(currency);
+	}
+	
+	/*
+	 * This method calculates and returns the total Euro value of 
+	 * each currency in the wallet
+	*/
+	public double getTotalEuroValue(){
+		
+	    double sum = 0;
+		for (Currency z : Curr){
+		
+			sum += z.euroValue;
+			
+		}
+		return sum;
+	}
+	
+	/*
+	 * This method sorts the currencies in ascending order according to their euro Values
+	*/
+	public void sort(){
+		//TODO
+		Collections.sort(Curr);
+		 System.out.println("After Sorting:");
+		 
+				System.out.println(this);
+			
+	}
+	
+	@Override
+	/*
+	 * The toString() method returns a String value of each currency and its amount in the wallet
+	 * each currency- amount pair is separated by a comma
+	 * e.g. USD:100,CAD:250,GBP:99,AUD:123
+	 * 
+	*/
+	public String toString(){
+		//TODO
+		//return null;
+		// idea , print USA = x EUR
+		//return  Curr.get(0) + Curr.get(1) + Curr.get(2) + Curr.get(3);
+		String ab = "";
+		for (Currency counter : Curr){
+			ab += counter.getCurrencyName() + ":" + counter.getAmount() +",";
+			ab += counter.getCurrencyName() + ":" + counter.getEuroValue() +","; // printing out euro value as well
+			
+		}
+		return ab ;
+	}
+	
+}
+
+
+
+package lab9;
+
+import static org.junit.Assert.*;
+
+import org.junit.Before;
+import org.junit.Test;
+
+public class WalletTest {
+	
+	Wallet myWallet = new Wallet("my trip");
+	
+	Currency usDollars;
+	Currency canDollars;
+	Currency sterling;
+	Currency ausDollars;
+
+
+	@Before
+	public void setUp() throws Exception {
+		
+		usDollars = new USD(100);
+		canDollars = new CAD(250);
+		sterling = new GBP(99);
+		ausDollars = new AUD(123);
+
+		myWallet.addCurrency(usDollars);
+		myWallet.addCurrency(canDollars);
+		myWallet.addCurrency(sterling);
+		myWallet.addCurrency(ausDollars);
+	}
+	
+	@Test
+	public void testConversion(){
+		
+		Converter converter= new Converter();
+		converter.setEuroValue(usDollars);
+		assertEquals(100*0.66, usDollars.getEuroValue(), 0.001);
+	}
+
+	
+	@Test
+	public void testGetTotalEuroValue() {
+		
+		double expected = 100 * 0.66 + 250 * 0.7 + 99 *1.4 + 123 * 0.93;
+		double actual = myWallet.getTotalEuroValue();	
+		assertEquals(expected, actual, 0.00001);	
+	}
+
+	@Test
+	public void testSort() {
+		
+		myWallet.sort();
+		
+		String wallet = myWallet.toString(); // get some ouput
+		String[] currencies = wallet.split(","); // splits the String into an array of String entries in the form USD:100
+		
+		assertEquals(currencies[0], "USD:100.0");
+		assertEquals(currencies[1], "AUD:123.0");
+		assertEquals(currencies[2], "GBP:99.0");
+		assertEquals(currencies[3], "CAD:250.0");
+	}
+
+	
+
+}
+
+
