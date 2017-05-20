@@ -1,0 +1,382 @@
+package casino;
+
+
+public class Card{
+
+	private int suit, rank;
+
+	public final static String[] suits = { "Clubs", "Diamonds", "Hearts", "Spades" };
+	public final static String[] ranks = {"zzz", "Ace", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Jack", "Queen", "King"};
+	
+	
+
+	/*
+	 * Constructor with arguments.
+	 */
+	public Card (int s, int r)  { 
+		//TODO 
+		this.suit = s ; this.rank = r;
+		
+	}
+	
+	
+	/*
+	 * This method returns a String representation of the Card
+	 * e.g.  "Jack of Hearts", "Ace of Spades", "Queen of Hearts"
+	 */
+
+	public  String toString() {
+		//TODO
+		return (ranks [this.rank] + " of " + suits[this.suit]);
+	}
+
+
+	/*
+	 * This method checks if this Card object 
+	 * has the same suit and rank values as the Card c being passed to it 
+	 * as a parameter
+	 * it returns true if this card has the same suit AND rank values as c
+	 */
+	
+	public  boolean equals(Card c) {
+		//TODO
+		if(  this.suit == c.suit && this.rank == c.rank)
+			return true;
+		return false; 
+	}
+
+	
+ 
+	
+	public int getSuit(){
+		return this.suit;
+	}
+
+	public int getRank(){
+		return this.rank;
+	}
+
+	
+
+}
+
+
+package casino;
+
+import java.util.ArrayList;
+import java.util.Scanner;
+
+public class ConcreteDealer implements Dealer{
+	
+	private Deck deck;
+	
+	
+
+	public static void main(String[] args) {
+		
+		System.out.printf("Enter number of players (integer only): ");
+		Scanner scan = new Scanner(System.in);
+		int numPlayers = scan.nextInt();
+		System.out.printf("Enter number of Cards (integer only): ");
+		int cards_In_Hand  = scan.nextInt();
+		scan.close();
+
+		
+		
+		Player[] players = new Player[numPlayers];
+		
+		Dealer dealer = new ConcreteDealer(); // new Dealer object
+		dealer.newDeck(); // creates a new Deck
+		dealer.shuffle(); // then shuffles the Deck
+		
+		
+		for (int i = 0; i< players.length; i++){ // for the number of hands required
+			players[i] = new Player();
+			Hand hand = dealer.deal(cards_In_Hand); // create a new  hand
+			players[i].setHand(hand);; // store each hand in the array
+		}
+		
+		
+		for (int i = 0; i< players.length; i++){ // for each of the players
+			players[i].showHand(); // print out the cards in each hand
+		}
+		
+	}
+
+	
+	
+@Override
+	public Hand deal(int n) {
+		// TODO write the code to deal out n cards from the deck
+		// You will need to create a Hand object and add these cards to it.
+  Hand newPlayerHand = new ConcreteHand(n);
+  for ( int i=0 ; i<n; i++)
+  {
+	       newPlayerHand.addCard( deck.removeTopCard());
+	    
+	  
+  }
+  
+  return newPlayerHand;
+	}
+
+
+@Override
+	public void shuffle() {
+		deck.shuffle();
+
+	}
+
+	
+
+@Override
+	public void newDeck() {
+		deck= new ConcreteDeck();
+		
+	}
+
+}
+
+
+
+package casino;
+
+import java.util.Random;
+
+
+public class ConcreteDeck  implements Deck{
+
+	//private Card[] cards = null; 
+	private Stack<Card> cards;
+	/*
+	 * public Constructor with arguments.
+	 */
+	public ConcreteDeck() {
+		//TODO initialise the cards array (size 52)
+		//then insert a new unique (and valid) Card for each of the array slots
+		//Your deck can't include duplicates
+		
+		cards = new  Stack<Card>();
+		for ( int i =0; i<4; i++){
+			for ( int j = 0; j<13 ; j++)
+			{
+				cards.push( new Card( i, j+1));
+			}
+		}
+		
+	} 
+
+	
+	/*
+	 * returns a String representation of the array of Card
+	 * e.g Ace of Clubs, Two of Clubs, Three of Clubs,..
+	 */
+	public String toString(){
+		//TODO
+		return null;
+	}
+	
+	
+	@Override
+	public void shuffle(){
+		//TODO 
+		//To get a random position in the deck you could use the math.random() function
+		int index;
+		Card temp;
+		Random random = new Random();
+		for ( int i =cards.size() - 1; i > 0 ; i--)
+		{ 
+			index = random.nextInt(i+1);
+			temp = cards.get(index);
+			cards.set(index, cards.get(i));
+			cards.set(i,temp);
+		}
+	}
+	
+	
+	@Override
+	public Card removeTopCard(){
+		
+		Card c = cards.pop();
+		return c;
+	
+	}
+	
+	public Stack<Card> getCards(){
+		return this.cards;
+	}
+	
+	
+}
+
+
+
+
+
+package casino;
+
+import java.util.ArrayList;
+
+public class ConcreteHand  implements Hand{
+	
+	private ArrayList<Card> cards;
+	private int counter=0;
+	private int size=0;
+
+	public ConcreteHand(int n){
+		//TODO you will need to initialise the cards variable with an array of size n
+		size = n;
+		cards = new ArrayList<Card>(n);
+	}
+	
+	/*
+	 * This method adds a Card to the cards array
+	 */
+	
+	public void addCard(Card card ){
+		//TODO you need to insert a Card to the array
+		//You'll need to have kept track of how many cards have been added already
+		//so that you add the card in the right place (i.e. immediately after the last added one)
+		
+		
+		 cards.add( card);//adds card
+		 
+		
+	}
+	
+	/*
+	 * This method prints out the hand
+	 * e.g. Ace of Clubs, 3 of Diamonds, Jack of Hearts, etc
+	 */
+	
+	public void show() {
+		
+		System.out.println("Cards are" + cards);//prints out cards
+	}
+
+}
+
+
+
+package casino;
+
+public interface Dealer {
+	
+	/*
+	 * This method removes n cards from the top of the deck and inserts them one by one into a new Hand object
+	 * which is then returned
+	 * 
+	 */
+	public Hand deal(int n);
+	
+	public void shuffle();
+	
+	/*
+	 * This method creates a new Deck object 
+	 */
+	
+	public void newDeck();
+
+}
+
+
+
+package casino;
+
+public interface Deck {
+
+
+	/*
+	 * This method shuffles the deck.
+	 * There are many ways to do this
+	 * One such way would be to select two random positions in the deck and swap the cards
+	 * Then do this a number of times
+	 */
+	
+	public void shuffle();
+	
+	
+	/*
+	 * This method selects the top card from the Deck
+	 * It then copies all the Cards (except the top Card) in the cards array into a new array 
+	 * and then sets the cards variable to point to that array
+	 * This has the effect of reducing the size of he deck by one every time this 
+	 * method is called
+	 * The method returns the Card selected in the first step
+	 */
+	public Card removeTopCard();
+
+}
+
+
+
+package casino;
+
+public interface Hand {
+	
+	/*
+	 * This method adds a Card to the cards array
+	 */
+	public void addCard(Card card);
+	
+	/*
+	 * This method prints out the hand
+	 * e.g. Ace of Clubs, 3 of Diamonds, Jack of Hearts, etc
+	 */
+	
+	public void show();
+
+
+		
+	
+
+}
+
+
+
+package casino;
+
+public class Player {
+	private Hand hand;
+	
+	public void setHand(Hand hand){
+		this.hand = hand;
+	}
+
+	public void showHand() {
+		hand.show();
+	}
+	
+}
+
+
+
+package casino;
+
+import java.util.ArrayList;
+
+public class Stack<B> extends ArrayList<B> {
+	private static final long serialVersionUID = 2373516189973616245L;
+
+	
+	public void push ( B elm){
+		this.add( elm);
+	}
+	
+	public B pop(){
+		if ( this.size() > 0){
+			B elm = this.get(0);
+			this.remove(0);
+			return elm;
+		}
+		
+		return null; 
+		
+		
+	}
+	
+	
+	
+}
+
+
