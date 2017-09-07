@@ -17,6 +17,10 @@ public class bulletsDemo {
 	//find out how many bullets you fire from a weapon in a minute 
 	// enter rate of fire and then program will calculate
 	
+	
+		//Assumptions 
+	//size of magazine does not equal or exceed the round per minute
+	
 	public static void main(String[] args) {
 		
 		System.out.println("Please enter Rate of Fire(rounds per minute) of weapon:");
@@ -49,11 +53,14 @@ public class bulletsDemo {
 		Scanner scan2 = new Scanner(System.in);//gets reload speed
 		double reload = scan2.nextDouble();
 		
+		//Where assumption above is required to work
 		
 		double time = reload + fired; // gets total time of mag empty + reload
 		double total = 60/time ;//gets amount of times you will be able to fire with reload and firing weapon per minute
-		System.out.println("Total time would be " + total ) ;
+			//print statement
+		System.out.println("Total amount of time able to fire and reload the weapon per minute would be " + total + " times") ;
 	
+		// amount of times able to fire per min * time to empty magazine
 		double efective = total*fired;// gets the effective time you are firing the weapon 
 		System.out.println("Total effective time Firing the weapon would be " + efective ) ;
 		double RateEff = efective / rate; // gets effective rate of fire with reload taken into account
